@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
 use App\Models\User;
+use App\Services\StudentService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Services\StudentService;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\UpdateStudentRequest;
 
 class StudentController extends Controller
 {
@@ -17,6 +17,7 @@ class StudentController extends Controller
     {
         $this->studentService = $studentService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,17 +32,27 @@ class StudentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(int $classId)
     {
-        //
+        return Inertia::render('user/student/Create', [
+            'class_id' => $classId,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreStudentRequest $request, $classId)
     {
-        //
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'class_id' => $classId,
+            'role' => 'Sinh viên',
+            'password' => '123123123',
+        ]);
+
+        return redirect()->route('students.index', $classId)->with('alert_success', 'Thêm sinh viên thành công.');
     }
 
     /**
@@ -68,17 +79,13 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, $classId, $studentId)
     {
-        $data = [
+        User::findOrFail($studentId)->update([
             'name' => $request->name,
             'email' => $request->email,
             'class_id' => $classId,
-            'role' => "Sinh viên",
-        ];
-        if ($request->filled('password')) {
-            $data['password'] = $request->password;
-        }
+            'role' => 'Sinh viên',
+        ]);
 
-        User::findOrFail($studentId)->update($data);
         return redirect()->route('students.index', $classId)->with('alert_success', 'Cập nhật sinh viên thành công.');
     }
 
@@ -89,7 +96,7 @@ class StudentController extends Controller
     {
         $user = User::find($studentId);
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->back()->with('alert_error', 'Không tìm thấy sinh viên.');
         }
 

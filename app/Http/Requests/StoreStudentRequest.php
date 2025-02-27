@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateStudentRequest extends FormRequest
+class StoreStudentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,7 +27,7 @@ class UpdateStudentRequest extends FormRequest
                 'required',
                 'email',
                 'max:100',
-                Rule::unique('users')->ignore($this->route('student')),
+                'unique:users',
             ],
         ];
     }

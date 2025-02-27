@@ -4,32 +4,29 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
-interface Student {
+interface Class {
     id: number;
     name: string;
-    email: string;
 }
 
 const props = defineProps<{
-    class_id: number;
-    student: Student;
+    data: Class;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Sinh viên',
-        href: `/classes/${props.class_id}/students`,
+        title: 'Lớp',
+        href: `/classes`,
     },
     {
-        title: 'Chỉnh sửa sinh viên',
-        href: `/classes/${props.class_id}/students/${props.class_id}/edit`,
+        title: 'Chỉnh sửa lớp',
+        href: `/classes/${props.data.id}/edit`,
     },
 ];
 
 // Form dữ liệu
 const form = useForm({
-    name: props.student.name,
-    email: props.student.email,
+    name: props.data.name,
 });
 
 // Trạng thái xử lý
@@ -37,7 +34,6 @@ const processing = ref(false);
 
 interface Errors {
     name?: string | string[];
-    email?: string | string[];
 }
 // Lỗi validation từ server
 const errors = ref<Errors>({});
@@ -46,7 +42,7 @@ const errors = ref<Errors>({});
 const submitForm = () => {
     processing.value = true;
 
-    form.patch(route("students.update", { id: props.class_id, student: props.student.id }), {
+    form.patch(route("classes.update", { id: props.data.id}), {
         onError: (err) => {
             errors.value = err;
         },
@@ -58,34 +54,22 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Head title="Chỉnh sửa sinh viên" />
+    <Head title="Chỉnh sửa lớp" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col items-center justify-center">
             <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-lg">
                 <form @submit.prevent="submitForm" class="space-y-4">
-                    <!-- Họ và Tên -->
+                    <!-- Tên lớp -->
                     <div>
-                        <label class="block text-gray-600 font-medium">Họ và Tên</label>
+                        <label class="block text-gray-600 font-medium">Tên lớp</label>
                         <input
                             v-model="form.name"
                             type="text"
                             class="w-full mt-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-blue-400 focus:border-blue-500"
-                            placeholder="Nhập tên sinh viên"
+                            placeholder="Nhập tên lớp"
                         />
                         <p v-if="errors.name" class="text-red-500 text-sm">{{ errors.name }}</p>
-                    </div>
-
-                    <!-- Email -->
-                    <div>
-                        <label class="block text-gray-600 font-medium">Email</label>
-                        <input
-                            v-model="form.email"
-                            type="email"
-                            class="w-full mt-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-blue-400 focus:border-blue-500"
-                            placeholder="Nhập email"
-                        />
-                        <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
                     </div>
 
                     <!-- Nút Submit -->

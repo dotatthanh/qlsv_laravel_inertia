@@ -4,15 +4,8 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
-interface Student {
-    id: number;
-    name: string;
-    email: string;
-}
-
 const props = defineProps<{
     class_id: number;
-    student: Student;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,15 +14,15 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: `/classes/${props.class_id}/students`,
     },
     {
-        title: 'Chỉnh sửa sinh viên',
-        href: `/classes/${props.class_id}/students/${props.class_id}/edit`,
+        title: 'Thêm sinh viên',
+        href: `/classes/${props.class_id}/students/create`,
     },
 ];
 
 // Form dữ liệu
 const form = useForm({
-    name: props.student.name,
-    email: props.student.email,
+    name: "",
+    email: "",
 });
 
 // Trạng thái xử lý
@@ -46,7 +39,7 @@ const errors = ref<Errors>({});
 const submitForm = () => {
     processing.value = true;
 
-    form.patch(route("students.update", { id: props.class_id, student: props.student.id }), {
+    form.post(route("students.store", { id: props.class_id }), {
         onError: (err) => {
             errors.value = err;
         },
@@ -58,7 +51,7 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Head title="Chỉnh sửa sinh viên" />
+    <Head title="Thêm sinh viên" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col items-center justify-center">

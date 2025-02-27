@@ -6,8 +6,8 @@ import { watch, ref, onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Sinh viên',
-        href: '/students',
+        title: 'Lớp',
+        href: '/classes',
     },
 ];
 
@@ -16,30 +16,29 @@ interface Student {
     name: string;
 }
 
-interface PaginatedStudents {
+interface PaginatedClasses {
     data: Student[];
     current_page: number;
     per_page: number;
     last_page: number;
 }
 
-const props = defineProps<{
-    students: PaginatedStudents;
-    class_id: number;
+defineProps<{
+    classes: PaginatedClasses;
 }>();
 
 // Chuyển trang bằng Inertia
 const changePage = (page: number) => {
-    router.get(route("students.index", { page: page, id: props.class_id, search: searchQuery.value }));
+    router.get(route("classes.index", { page: page, search: searchQuery.value }));
 };
 
-const editStudent = (student: Student) => {
-    router.get(route("students.edit", { id: props.class_id, student: student.id }));
+const editStudent = (id: number) => {
+    router.get(route("classes.edit", { id: id }));
 };
 
-const deleteStudent = (student: Student) => {
+const deleteStudent = (id: number) => {
     if (confirm('Bạn có chắc chắn muốn xóa?')) {
-        router.delete(route("students.destroy", { id: props.class_id, student: student.id }));
+        router.delete(route("classes.destroy", { id: id }));
     }
 };
 
@@ -51,6 +50,12 @@ watch(() => page.props.flash.alert_success, (message) => {
         page.props.flash.alert_success = null;
     }
 });
+watch(() => page.props.flash.alert_error, (message) => {
+    if (message) {
+        alert(message); // Hoặc thay bằng thư viện như Toastr, SweetAlert
+        page.props.flash.alert_error = null;
+    }
+});
 
 const searchQuery = ref("");
 onMounted(() => {
@@ -59,12 +64,12 @@ onMounted(() => {
 });
 
 const searchStudents = () => {
-    router.get(route("students.index", { id: props.class_id, search: searchQuery.value }));
+    router.get(route("classes.index", { search: searchQuery.value }));
 };
 </script>
 
 <template>
-    <Head title="Sinh viên" />
+    <Head title="Lớp" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -72,7 +77,7 @@ const searchStudents = () => {
                 <input
                     v-model="searchQuery"
                     type="text"
-                    placeholder="Nhập tên sinh viên..."
+                    placeholder="Nhập tên lớp..."
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
@@ -83,7 +88,7 @@ const searchStudents = () => {
                 </button>
                 <a
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-                    :href="route('students.create', { id: props.class_id })"
+                    :href="route('classes.create')"
                 >
                     Thêm
                 </a>
@@ -98,19 +103,25 @@ const searchStudents = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="hover:bg-gray-100" v-for="(student, index) in students.data" :key="student.id">
-                        <td class="border border-gray-300 px-4 py-2">{{ (students.current_page - 1) * students.per_page + index + 1 }}</td>
-                        <td class="border border-gray-300 px-4 py-2">{{ student.name }}</td>
+                    <tr class="hover:bg-gray-100" v-for="(item, index) in classes.data" :key="item.id">
+                        <td class="border border-gray-300 px-4 py-2">{{ (classes.current_page - 1) * classes.per_page + index + 1 }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ item.name }}</td>
                         <td class="border border-gray-300 px-4 py-2">
+                            <a
+                                class="inline-flex items-center bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2 h-8"
+                                :href="route('students.index', { id: item.id })"
+                            >
+                                Xem sinh viên
+                            </a>
                             <button 
-                                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
-                                @click="editStudent(student)"
+                                class="inline-flex items-center bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2 h-8"
+                                @click="editStudent(item.id)"
                             >
                                 Sửa
                             </button>
                             <button 
-                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                                @click="deleteStudent(student)"
+                                class="inline-flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 h-8"
+                                @click="deleteStudent(item.id)"
                             >
                                 Xóa
                             </button>
@@ -123,17 +134,17 @@ const searchStudents = () => {
             <div class="flex justify-center space-x-2 mt-4">
                 <button
                     class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                    @click="changePage(students.current_page - 1)"
-                    :disabled="students.current_page === 1"
+                    @click="changePage(classes.current_page - 1)"
+                    :disabled="classes.current_page === 1"
                 >
                     « Trước
                 </button>
 
                 <button
-                    v-for="page in students.last_page"
+                    v-for="page in classes.last_page"
                     :key="page"
                     class="px-3 py-1 rounded"
-                    :class="page === students.current_page ? 'bg-blue-500 text-white' : 'bg-gray-200'"
+                    :class="page === classes.current_page ? 'bg-blue-500 text-white' : 'bg-gray-200'"
                     @click="changePage(page)"
                 >
                     {{ page }}
@@ -141,8 +152,8 @@ const searchStudents = () => {
 
                 <button
                     class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                    @click="changePage(students.current_page + 1)"
-                    :disabled="students.current_page === students.last_page"
+                    @click="changePage(classes.current_page + 1)"
+                    :disabled="classes.current_page === classes.last_page"
                 >
                     Sau »
                 </button>
