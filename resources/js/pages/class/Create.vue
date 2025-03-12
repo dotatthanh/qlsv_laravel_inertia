@@ -10,7 +10,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: `/classes`,
     },
     {
-        title: 'Tạo lớp',
+        title: 'Tạo lớp học',
         href: `/classes/create`,
     },
 ];
@@ -45,20 +45,20 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Head title="Tạo lớp" />
+    <Head title="Tạo lớp học" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col items-center justify-center">
             <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-lg">
                 <form @submit.prevent="submitForm" class="space-y-4">
-                    <!-- Tên lớp -->
+                    <!-- Tên lớp học -->
                     <div>
-                        <label class="block text-gray-600 font-medium">Tên lớp</label>
+                        <label class="block text-gray-600 font-medium">Tên lớp học</label>
                         <input
                             v-model="form.name"
                             type="text"
                             class="w-full mt-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-blue-400 focus:border-blue-500"
-                            placeholder="Nhập tên lớp"
+                            placeholder="Nhập tên lớp học"
                         />
                         <p v-if="errors.name" class="text-red-500 text-sm">{{ errors.name }}</p>
                     </div>

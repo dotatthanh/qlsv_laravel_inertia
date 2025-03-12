@@ -18,6 +18,7 @@ class PointSeeder extends Seeder
             for ($i = 1; $i <= 4; $i++) { // môn
                 for ($j = 1; $j <= 160; $j++) { // user
                     Point::create([
+                        'class_id' => User::find($j)->class_id,
                         'user_id' => $j,
                         'subject_id' => $i,
                         'point' => rand(0, 10),

@@ -15,12 +15,12 @@ const props = defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Lớp',
-        href: `/classes`,
+        title: 'Môn học',
+        href: `/subjects`,
     },
     {
-        title: 'Chỉnh sửa lớp học',
-        href: `/classes/${props.data.id}/edit`,
+        title: 'Chỉnh sửa môn học',
+        href: `/subjects/${props.data.id}/edit`,
     },
 ];
 
@@ -42,7 +42,7 @@ const errors = ref<Errors>({});
 const submitForm = () => {
     processing.value = true;
 
-    form.patch(route("classes.update", { id: props.data.id}), {
+    form.patch(route("subjects.update", { id: props.data.id}), {
         onError: (err) => {
             errors.value = err;
         },
@@ -54,20 +54,20 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Head title="Chỉnh sửa lớp học" />
+    <Head title="Chỉnh sửa môn học" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col items-center justify-center">
             <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-lg">
                 <form @submit.prevent="submitForm" class="space-y-4">
-                    <!-- Tên lớp học -->
+                    <!-- Tên môn học -->
                     <div>
-                        <label class="block text-gray-600 font-medium">Tên lớp học</label>
+                        <label class="block text-gray-600 font-medium">Tên môn học</label>
                         <input
                             v-model="form.name"
                             type="text"
                             class="w-full mt-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-blue-400 focus:border-blue-500"
-                            placeholder="Nhập tên lớp học"
+                            placeholder="Nhập tên môn học"
                         />
                         <p v-if="errors.name" class="text-red-500 text-sm">{{ errors.name }}</p>
                     </div>

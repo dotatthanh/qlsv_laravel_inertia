@@ -6,7 +6,7 @@ import { watch, ref, onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Lớp',
+        title: 'Lớp học',
         href: '/classes',
     },
 ];
@@ -44,16 +44,16 @@ const deleteStudent = (id: number) => {
 
 const page = usePage();
 // Theo dõi flash message để hiển thị thông báo khi có thay đổi
-watch(() => page.props.flash.alert_success, (message) => {
+watch(() => (page.props.flash as { alert_success?: string }).alert_success, (message) => {
     if (message) {
-        alert(message); // Hoặc thay bằng thư viện như Toastr, SweetAlert
-        page.props.flash.alert_success = null;
+        alert(message); // Hoặc dùng Toastr, SweetAlert
+        (page.props.flash as { alert_success?: string }).alert_success = undefined;
     }
 });
-watch(() => page.props.flash.alert_error, (message) => {
+watch(() => (page.props.flash as { alert_error?: string }).alert_error, (message) => {
     if (message) {
-        alert(message); // Hoặc thay bằng thư viện như Toastr, SweetAlert
-        page.props.flash.alert_error = null;
+        alert(message); // Hoặc dùng Toastr, SweetAlert
+        (page.props.flash as { alert_error?: string }).alert_error = undefined;
     }
 });
 
@@ -69,7 +69,7 @@ const searchStudents = () => {
 </script>
 
 <template>
-    <Head title="Lớp" />
+    <Head title="Lớp học" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -77,7 +77,7 @@ const searchStudents = () => {
                 <input
                     v-model="searchQuery"
                     type="text"
-                    placeholder="Nhập tên lớp..."
+                    placeholder="Nhập tên lớp học..."
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
@@ -112,6 +112,12 @@ const searchStudents = () => {
                                 :href="route('students.index', { id: item.id })"
                             >
                                 Xem sinh viên
+                            </a>
+                            <a
+                                class="inline-flex items-center bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2 h-8"
+                                :href="route('points.index', { id: item.id })"
+                            >
+                                Xem điểm
                             </a>
                             <button 
                                 class="inline-flex items-center bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2 h-8"

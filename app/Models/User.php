@@ -53,4 +53,24 @@ class User extends Authenticatable
     {
         $this->attributes['password'] = Hash::make($value);
     }
+
+    public function oralTestScores()
+    {
+        return $this->hasMany(Point::class)->where('type', 'Kiểm tra miệng');
+    }
+
+    public function quizScores()
+    {
+        return $this->hasMany(Point::class)->where('type', 'Kiểm tra 15 phút');
+    }
+
+    public function midtermTestScores()
+    {
+        return $this->hasMany(Point::class)->where('type', 'Kiểm tra 45 phút');
+    }
+
+    public function finalTestScores()
+    {
+        return $this->hasMany(Point::class)->where('type', 'Kiểm tra học kì');
+    }
 }

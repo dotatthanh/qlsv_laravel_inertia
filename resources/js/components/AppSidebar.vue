@@ -15,17 +15,17 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'L',
+        title: 'Lớp học',
         href: '/classes',
         icon: LayoutGrid,
     },
     {
-        title: 'M',
+        title: 'Môn học',
         href: '/subjects',
         icon: LayoutGrid,
     },
     {
-        title: 'P',
+        title: 'Điểm',
         href: '/points',
         icon: LayoutGrid,
     },

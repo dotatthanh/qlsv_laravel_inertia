@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\PointController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,6 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('classes/{id}/students', StudentController::class);
     Route::resource('classes', ClassController::class);
+    Route::resource('subjects', SubjectController::class);
+    // Route::resource('classes/{classId}/subjects/{subjectId}/point', PointController::class);
+    Route::resource('classes/{id}/points', PointController::class);
 });
 
 require __DIR__.'/settings.php';

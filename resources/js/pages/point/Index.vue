@@ -7,39 +7,49 @@ import { watch, ref, onMounted } from 'vue';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Sinh viên',
-        href: '/students',
+        href: '/points',
     },
 ];
 
-interface Student {
+interface Point {
     id: number;
-    name: string;
+    point: string;
 }
 
-interface PaginatedStudents {
-    data: Student[];
+interface User {
+    id: number;
+    name: string;
+    point: number;
+    oral_test_scores: Point[],
+    quiz_scores: Point[],
+    midterm_test_scores: Point[],
+    final_test_scores: Point[]
+}
+
+interface PaginatedUsers {
+    data: User[];
     current_page: number;
     per_page: number;
     last_page: number;
 }
 
 const props = defineProps<{
-    students: PaginatedStudents;
+    points: PaginatedUsers;
     class_id: number;
 }>();
 
 // Chuyển trang bằng Inertia
 const changePage = (page: number) => {
-    router.get(route("students.index", { page: page, id: props.class_id, search: searchQuery.value }));
+    router.get(route("points.index", { page: page, id: props.class_id, search: searchQuery.value }));
 };
 
-const editStudent = (student: Student) => {
-    router.get(route("students.edit", { id: props.class_id, student: student.id }));
+const editUser = (point: User) => {
+    router.get(route("points.edit", { id: props.class_id, point: point.id }));
 };
 
-const deleteStudent = (student: Student) => {
+const deleteUser = (point: User) => {
     if (confirm('Bạn có chắc chắn muốn xóa?')) {
-        router.delete(route("students.destroy", { id: props.class_id, student: student.id }));
+        router.delete(route("points.destroy", { id: props.class_id, point: point.id }));
     }
 };
 
@@ -64,8 +74,8 @@ onMounted(() => {
     searchQuery.value = params.get('search') || '';
 });
 
-const searchStudents = () => {
-    router.get(route("students.index", { id: props.class_id, search: searchQuery.value }));
+const searchUsers = () => {
+    router.get(route("points.index", { id: props.class_id, search: searchQuery.value }));
 };
 </script>
 
@@ -82,17 +92,11 @@ const searchStudents = () => {
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
-                    @click="searchStudents"
+                    @click="searchUsers"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                 >
                     Tìm kiếm
                 </button>
-                <a
-                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-                    :href="route('students.create', { id: props.class_id })"
-                >
-                    Thêm
-                </a>
             </div>
 
             <table class="table-auto border-collapse border border-gray-300 w-full text-left">
@@ -100,23 +104,47 @@ const searchStudents = () => {
                     <tr class="bg-gray-200">
                         <th class="border border-gray-300 px-4 py-2">STT</th>
                         <th class="border border-gray-300 px-4 py-2">Tên</th>
+                        <th class="border border-gray-300 px-4 py-2">Điểm miệng</th>
+                        <th class="border border-gray-300 px-4 py-2">Điểm 15 phút</th>
+                        <th class="border border-gray-300 px-4 py-2">Điểm 45 phút</th>
+                        <th class="border border-gray-300 px-4 py-2">Điểm học kỳ</th>
                         <th class="border border-gray-300 px-4 py-2">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="hover:bg-gray-100" v-for="(student, index) in students.data" :key="student.id">
-                        <td class="border border-gray-300 px-4 py-2">{{ (students.current_page - 1) * students.per_page + index + 1 }}</td>
-                        <td class="border border-gray-300 px-4 py-2">{{ student.name }}</td>
+                    <tr class="hover:bg-gray-100" v-for="(point, index) in points.data" :key="point.id">
+                        <td class="border border-gray-300 px-4 py-2">{{ (points.current_page - 1) * points.per_page + index + 1 }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ point.name }}</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <div class="flex gap-1">
+                                <div class="border w-[20px] text-center" v-for="oralTestScore in point.oral_test_scores" :key="oralTestScore.id">{{ oralTestScore.point }}</div>
+                            </div>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <div class="flex gap-1">
+                                <div class="border w-[20px] text-center" v-for="quizScore in point.quiz_scores" :key="quizScore.id">{{ quizScore.point }}</div>
+                            </div>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <div class="flex gap-1">
+                                <div class="border w-[20px] text-center" v-for="midterm_test_score in point.midterm_test_scores" :key="midterm_test_score.id">{{ midterm_test_score.point }}</div>
+                            </div>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <div class="flex gap-1">
+                                <div class="border w-[20px] text-center" v-for="finalTestScore in point.final_test_scores" :key="finalTestScore.id">{{ finalTestScore.point }}</div>
+                            </div>
+                        </td>
                         <td class="border border-gray-300 px-4 py-2">
                             <button 
                                 class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
-                                @click="editStudent(student)"
+                                @click="editUser(point)"
                             >
                                 Sửa
                             </button>
                             <button 
                                 class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                                @click="deleteStudent(student)"
+                                @click="deleteUser(point)"
                             >
                                 Xóa
                             </button>
@@ -129,17 +157,17 @@ const searchStudents = () => {
             <div class="flex justify-center space-x-2 mt-4">
                 <button
                     class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                    @click="changePage(students.current_page - 1)"
-                    :disabled="students.current_page === 1"
+                    @click="changePage(points.current_page - 1)"
+                    :disabled="points.current_page === 1"
                 >
                     « Trước
                 </button>
 
                 <button
-                    v-for="page in students.last_page"
+                    v-for="page in points.last_page"
                     :key="page"
                     class="px-3 py-1 rounded"
-                    :class="page === students.current_page ? 'bg-blue-500 text-white' : 'bg-gray-200'"
+                    :class="page === points.current_page ? 'bg-blue-500 text-white' : 'bg-gray-200'"
                     @click="changePage(page)"
                 >
                     {{ page }}
@@ -147,8 +175,8 @@ const searchStudents = () => {
 
                 <button
                     class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                    @click="changePage(students.current_page + 1)"
-                    :disabled="students.current_page === students.last_page"
+                    @click="changePage(points.current_page + 1)"
+                    :disabled="points.current_page === points.last_page"
                 >
                     Sau »
                 </button>
