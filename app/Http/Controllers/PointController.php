@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Classes;
 use App\Models\Point;
-use Illuminate\Http\Request;
 use App\Services\PointService;
+use App\Services\SubjectService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PointController extends Controller
 {
     protected $pointService;
 
-    public function __construct(PointService $pointService)
+    protected $subjectService;
+
+    public function __construct(PointService $pointService, SubjectService $subjectService)
     {
         $this->pointService = $pointService;
+        $this->subjectService = $subjectService;
     }
 
     /**
@@ -23,7 +28,8 @@ class PointController extends Controller
     {
         return Inertia::render('point/Index', [
             'points' => $this->pointService->getPointList($classId, $request),
-            'class_id' => $classId,
+            'classData' => Classes::find($classId),
+            'subjects' => $this->subjectService->getAllSubject(),
         ]);
     }
 

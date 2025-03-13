@@ -4,13 +4,6 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, router, usePage } from "@inertiajs/vue3";
 import { watch, ref, onMounted } from 'vue';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Sinh viên',
-        href: '/points',
-    },
-];
-
 interface Point {
     id: number;
     point: string;
@@ -26,6 +19,11 @@ interface User {
     final_test_scores: Point[]
 }
 
+interface Subject {
+    id: number;
+    name: string;
+}
+
 interface PaginatedUsers {
     data: User[];
     current_page: number;
@@ -33,25 +31,38 @@ interface PaginatedUsers {
     last_page: number;
 }
 
+interface Class {
+    id: number;
+    name: string;
+}
+
 const props = defineProps<{
     points: PaginatedUsers;
-    class_id: number;
+    classData: Class;
+    subjects: Subject[];
 }>();
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: `Xem điểm lớp ${props.classData.name}`,
+        href: '/points',
+    },
+];
 
 // Chuyển trang bằng Inertia
 const changePage = (page: number) => {
-    router.get(route("points.index", { page: page, id: props.class_id, search: searchQuery.value }));
+    router.get(route("points.index", { page: page, id: props.classData.id, search: searchQuery.value, subject_id: subjectQuery.value }));
 };
 
-const editUser = (point: User) => {
-    router.get(route("points.edit", { id: props.class_id, point: point.id }));
-};
+// const editUser = (point: User) => {
+//     router.get(route("points.edit", { id: props.classData.id, point: point.id }));
+// };
 
-const deleteUser = (point: User) => {
-    if (confirm('Bạn có chắc chắn muốn xóa?')) {
-        router.delete(route("points.destroy", { id: props.class_id, point: point.id }));
-    }
-};
+// const deleteUser = (point: User) => {
+//     if (confirm('Bạn có chắc chắn muốn xóa?')) {
+//         router.delete(route("points.destroy", { id: props.classData.id, point: point.id }));
+//     }
+// };
 
 const page = usePage();
 // Theo dõi flash message để hiển thị thông báo khi có thay đổi
@@ -69,13 +80,15 @@ watch(() => (page.props.flash as { alert_error?: string }).alert_error, (message
 });
 
 const searchQuery = ref("");
+const subjectQuery = ref("");
 onMounted(() => {
     const params = new URLSearchParams(window.location.search);
     searchQuery.value = params.get('search') || '';
+    subjectQuery.value = params.get('subject_id') || '';
 });
 
 const searchUsers = () => {
-    router.get(route("points.index", { id: props.class_id, search: searchQuery.value }));
+    router.get(route("points.index", { id: props.classData.id, search: searchQuery.value, subject_id: subjectQuery.value }));
 };
 </script>
 
@@ -85,6 +98,13 @@ const searchUsers = () => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <div class="flex items-center space-x-2">
+                <select
+                    v-model="subjectQuery"
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    <option value="">Chọn môn học</option>
+                    <option v-for="subject in props.subjects" :selected="Number(subjectQuery) == subject.id" :key="subject.id" :value="subject.id">{{ subject.name }}</option>
+                </select>
                 <input
                     v-model="searchQuery"
                     type="text"
@@ -108,7 +128,7 @@ const searchUsers = () => {
                         <th class="border border-gray-300 px-4 py-2">Điểm 15 phút</th>
                         <th class="border border-gray-300 px-4 py-2">Điểm 45 phút</th>
                         <th class="border border-gray-300 px-4 py-2">Điểm học kỳ</th>
-                        <th class="border border-gray-300 px-4 py-2">Hành động</th>
+                        <!-- <th class="border border-gray-300 px-4 py-2">Hành động</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -135,7 +155,7 @@ const searchUsers = () => {
                                 <div class="border w-[20px] text-center" v-for="finalTestScore in point.final_test_scores" :key="finalTestScore.id">{{ finalTestScore.point }}</div>
                             </div>
                         </td>
-                        <td class="border border-gray-300 px-4 py-2">
+                        <!-- <td class="border border-gray-300 px-4 py-2">
                             <button 
                                 class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
                                 @click="editUser(point)"
@@ -148,7 +168,7 @@ const searchUsers = () => {
                             >
                                 Xóa
                             </button>
-                        </td>
+                        </td> -->
                     </tr>
                 </tbody>
             </table>

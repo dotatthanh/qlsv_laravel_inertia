@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subject;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreSubjectRequest;
+use App\Models\Subject;
 use App\Services\SubjectService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SubjectController extends Controller
