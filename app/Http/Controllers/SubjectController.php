@@ -10,11 +10,11 @@ use Inertia\Inertia;
 
 class SubjectController extends Controller
 {
-    protected $classService;
+    protected $subjectService;
 
-    public function __construct(SubjectService $classService)
+    public function __construct(SubjectService $subjectService)
     {
-        $this->classService = $classService;
+        $this->subjectService = $subjectService;
     }
 
     /**
@@ -23,7 +23,7 @@ class SubjectController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('subject/Index', [
-            'subjects' => $this->classService->getSubjectList($request),
+            'subjects' => $this->subjectService->getSubjectList($request),
         ]);
     }
 

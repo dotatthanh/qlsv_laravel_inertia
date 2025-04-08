@@ -20,4 +20,9 @@ class ClassService
 
         return $data;
     }
+
+    public function getAllClasses()
+    {
+        return Classes::orderBy('name')->get();
+    }
 }

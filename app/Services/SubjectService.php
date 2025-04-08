@@ -21,7 +21,7 @@ class SubjectService
         return $data;
     }
 
-    public function getAllSubject()
+    public function getAllSubjects()
     {
         return Subject::orderBy('name')->get();
     }

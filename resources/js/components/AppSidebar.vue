@@ -24,6 +24,11 @@ const mainNavItems: NavItem[] = [
         href: '/subjects',
         icon: LayoutGrid,
     },
+    {
+        title: 'Nhập điểm',
+        href: '/import',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

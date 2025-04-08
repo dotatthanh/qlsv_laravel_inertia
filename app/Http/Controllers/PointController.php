@@ -29,7 +29,7 @@ class PointController extends Controller
         return Inertia::render('point/Index', [
             'points' => $this->pointService->getPointList($classId, $request),
             'classData' => Classes::find($classId),
-            'subjects' => $this->subjectService->getAllSubject(),
+            'subjects' => $this->subjectService->getAllSubjects(),
         ]);
     }
 

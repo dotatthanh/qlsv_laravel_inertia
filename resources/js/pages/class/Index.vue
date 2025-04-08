@@ -11,13 +11,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface Student {
+interface Class {
     id: number;
     name: string;
 }
 
 interface PaginatedClasses {
-    data: Student[];
+    data: Class[];
     current_page: number;
     per_page: number;
     last_page: number;
@@ -32,11 +32,11 @@ const changePage = (page: number) => {
     router.get(route("classes.index", { page: page, search: searchQuery.value }));
 };
 
-const editStudent = (id: number) => {
+const editClass = (id: number) => {
     router.get(route("classes.edit", { id: id }));
 };
 
-const deleteStudent = (id: number) => {
+const deleteClass = (id: number) => {
     if (confirm('Bạn có chắc chắn muốn xóa?')) {
         router.delete(route("classes.destroy", { id: id }));
     }
@@ -63,7 +63,7 @@ onMounted(() => {
     searchQuery.value = params.get('search') || '';
 });
 
-const searchStudents = () => {
+const searchClasss = () => {
     router.get(route("classes.index", { search: searchQuery.value }));
 };
 </script>
@@ -81,7 +81,7 @@ const searchStudents = () => {
                     class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
-                    @click="searchStudents"
+                    @click="searchClasss"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                 >
                     Tìm kiếm
@@ -121,13 +121,13 @@ const searchStudents = () => {
                             </a>
                             <button 
                                 class="inline-flex items-center bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2 h-8"
-                                @click="editStudent(item.id)"
+                                @click="editClass(item.id)"
                             >
                                 Sửa
                             </button>
                             <button 
                                 class="inline-flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 h-8"
-                                @click="deleteStudent(item.id)"
+                                @click="deleteClass(item.id)"
                             >
                                 Xóa
                             </button>
